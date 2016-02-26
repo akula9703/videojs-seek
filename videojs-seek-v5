@@ -1,0 +1,29 @@
+(function (vjs) {
+    defaults = {
+        seek_param: 'time'
+    },
+
+    seek = function (options) {
+        var player = this;
+        settings = extend({}, defaults, options || {})
+        var getNamedParameterValue, seekParam, seekValue, _ref;
+        if (options == null) {
+            options = {};
+        }
+        getNamedParameterValue = function (name) {
+            var match;
+            match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+            return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+        };
+        seekParam = options['seek_param'] || JSON.parse((_ref = this.options()['data-setup']) != null ? _ref : '{}')['seek_param'] || 't';
+        seekValue = parseInt(getNamedParameterValue(seekParam));
+        if (seekValue) {
+            return player.ready(function () {
+                return player.one('playing', function () {
+                    return player.currentTime(seekValue);
+                });
+            });
+        }
+    }
+    vjs.plugin('seek', seek);
+}(window.videojs));
